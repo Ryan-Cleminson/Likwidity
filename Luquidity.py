@@ -1,29 +1,34 @@
 from bs4 import BeautifulSoup
 import pandas as pd
+import numpy as np
 import urllib.request as urllib2
 import csv
+import mysql.connector
+
+Lukwiditydb = mysql.connector.connect(
+  host="rclx1.australiaeast.cloudapp.azure.com",
+  user="RC_Dev",
+  password="Da41264@210a242579Ca50e#00dc808c9",
+  port=3307
+)
 
 west_url = 'https://www.westpac.com.au/personal-banking/bank-accounts/term-deposit/rates/'
 west_table_id = 'tabcordion-body'
 
 request = urllib2.Request(west_url)
 page = urllib2.urlopen(request)
-soup = BeautifulSoup(page, 'html.parser')
 
-west_table = soup.find_all('div', attrs={'class': west_table_id})
+west_table = soup.find_all('div', attrs={'class':'table-responsive'})
 west_TD = pd.read_html(str(west_table))
 west_df = pd.DataFrame(west_TD)
 
-for row in west_table:
-    rows = row.find('td').text.strip()
-    print(rows)
-
 west_xl = pd.ExcelWriter('Westpac_TD.xlsx', engine='xlsxwriter')
 west_df.to_excel(west_xl, sheet_name = 'Sheet1', index = False)
+
 west_xl.save()
+Lukwiditydb.close()
 
 # west_table = west_table[0]
-
 # for row in west_table.find_all('tr'):
 #     for cell in row.find_all('td'):
 #         print(cell.text)
@@ -34,12 +39,10 @@ west_xl.save()
 #             r.write(cell.text)
 
 # west_td = pd.read_html(str(west_table))
-
 # responce = requests.get(west_url)
 # soup = BeautifulSoup(responce.text, 'html.parser')
 
 # westpac_table = soup.find('div', attrs={'id': west_table_id})
-
 # west_df.to_csv(r'C:\GitHub\Python-Library\Projects\Bank_Web_Scrape\Westpac_TD.csv', index = False)
 
 pd.set_option('display.max_columns',100)
