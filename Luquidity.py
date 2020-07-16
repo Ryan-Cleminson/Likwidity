@@ -12,13 +12,13 @@ Lukwiditydb = mysql.connector.connect(
   port=3307
 )
 
-west_url = 'https://www.westpac.com.au/personal-banking/bank-accounts/term-deposit/rates/'
-west_table_id = 'tabcordion-body'
+west_url = 'https://www.westpac.com.au/business-banking/savings-accounts/term-deposits/business-term-deposit-rates/'
+west_table_id = 'row'
 
 request = urllib2.Request(west_url)
 page = urllib2.urlopen(request)
 
-west_table = soup.find_all('div', attrs={'class':'table-responsive'})
+west_table = soup.find_all('div', attrs={'class':west_table_id})
 west_TD = pd.read_html(str(west_table))
 west_df = pd.DataFrame(west_TD)
 
@@ -54,8 +54,8 @@ pd.set_option('expand_frame_repr',True)
 
 ##############################################################################
 
-anz_url = 'https://www.anz.com.au/personal/bank-accounts/your-account/rates-fees-terms/#td'
-anz_table_id = 'table-scrollable'
+anz_url = 'https://www.anz.com.au/business/accounts/savings-accounts/business-term-deposit/'
+anz_table_id = 'aem__component clearfix'
 
 request = urllib2.Request(anz_url)
 page = urllib2.urlopen(request)
@@ -71,7 +71,7 @@ anz_xl.save()
 
 ##############################################################################
 
-com_url = 'https://www.commbank.com.au/banking/term-deposits.html'
+com_url = 'https://www.commbank.com.au/banking/term-deposits/rates-and-fees.html'
 com_table_id = 'table'
 
 request = urllib2.Request(com_url)
@@ -79,6 +79,11 @@ page = urllib2.urlopen(request)
 soup = BeautifulSoup(page, 'html.parser')
 
 com_table = soup.find('div', attrs={'class': com_table_id})
+
+for row in com_table.find_all('div', attrs={'class': 'table-row table-header'}):
+    for cell in row.find_all('div', attrs={'class': 'table-row'}):
+        print(cell.text)
+
 com_TD = pd.read_html(str(com_table))
 com_df = pd.DataFrame(com_TD)
 
@@ -89,7 +94,7 @@ com_xl.save()
 ##############################################################################
 
 nab_url = 'https://www.nab.com.au/personal/interest-rates-fees-and-charges/indicator-rates-selected-term-deposit-products'
-nab_table_id = 'nabrwd-table section'
+nab_table_id = 'section-container section'
 
 request = urllib2.Request(nab_url)
 page = urllib2.urlopen(request)
