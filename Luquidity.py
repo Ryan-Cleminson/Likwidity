@@ -14,7 +14,11 @@ west_table = soup.find_all('div', attrs={'class': west_table_id})
 west_TD = pd.read_html(str(west_table))
 west_df = pd.DataFrame(west_TD)
 
-west_xl = pd.ExcelWriter('Westpac_TD.xlsx')
+for row in west_table:
+    rows = row.find('td').text.strip()
+    print(rows)
+
+west_xl = pd.ExcelWriter('Westpac_TD.xlsx', engine='xlsxwriter')
 west_df.to_excel(west_xl, sheet_name = 'Sheet1', index = False)
 west_xl.save()
 
@@ -75,7 +79,7 @@ com_table = soup.find('div', attrs={'class': com_table_id})
 com_TD = pd.read_html(str(com_table))
 com_df = pd.DataFrame(com_TD)
 
-com_xl = pd.ExcelWriter('Westpac_TD.xlsx')
+com_xl = pd.ExcelWriter('Commonwealth_TD.xlsx')
 com_df.to_excel(com_xl, sheet_name = 'Sheet1', index = False)
 com_xl.save()
 
@@ -92,6 +96,6 @@ nab_table = soup.find_all('div', attrs={'class': nab_table_id})
 nab_TD = pd.read_html(str(nab_table))
 nab_df = pd.DataFrame(nab_TD)
 
-nab_xl = pd.ExcelWriter('Westpac_TD.xlsx')
+nab_xl = pd.ExcelWriter('Nab_TD.xlsx')
 nab_df.to_excel(nab_xl, sheet_name = 'Sheet1', index = False)
 nab_xl.save()
